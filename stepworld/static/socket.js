@@ -1,4 +1,4 @@
-var socket = io.connect();
+var socket = io.connect('https://' + document.domain + ':' + location.port + '/play');
 var playerName = Math.random();
 
 /***
@@ -35,7 +35,7 @@ socket.on('send world to client', function(msg) {
   //Get the info about existing avatars from the server then create them on the client
   var parsed = JSON.parse(msg.players);
   for (var p in parsed) {
-    if (parsed[p].name === playerName)
+    if (parsed[p].name === playerName) 
       continue;
     var a = new Avatar(parsed[p].name, parsed[p].grid_x, parsed[p].grid_y, parsed[p].direction);
     allSprites.addChild(a);
@@ -75,7 +75,7 @@ socket.on('update remote players about the move', function(msg) {
   console.log('received');
   var a = remoteAvatars[msg.playerName];
   moveRemoteAvatar(a, msg.x, msg.y);
-  console.log(msg.playerName+" moved");
+  console.log(msg.playerName+" moved");		
 });
 
 socket.on('update remote players about the turn', function(msg) {
@@ -86,6 +86,6 @@ socket.on('update remote players about the turn', function(msg) {
   a.direction = msg.direction;
   a.scale.x *= -1;
   updateAvatarDisplayPos(a);
-  console.log(msg.playerName+" turned"+" dir="+msg.direction);
+  console.log(msg.playerName+" turned"+" dir="+msg.direction);	
 });
 
