@@ -100,7 +100,8 @@ function checkCollision(avt) {
     avt.velY = 0;
     if (avt === avatar) centerCamera();
     renderer.render(stage);
-    alert('YOU DID IT');
+    document.getElementById('text').innerHTML = "You did it!"
+    location.reload();
   }
   //check if avatar is on the ground
   /**if (avatar.position.y + avatar.height >= 600) {
