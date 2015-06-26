@@ -18,13 +18,13 @@ grid_height = 200
 def index():
     return render_template('index.html')
     
-@socketio.on('connect', namespace='/play')
+@socketio.on('connect')
 def test_connect():
   emit('connection callback')
   print('connected', id(request.namespace))
   allClientIDs.append(id(request.namespace))
 
-@socketio.on('disconnect', namespace='/play')
+@socketio.on('disconnect')
 def disconnect_client():
   print('disconnected', id(request.namespace), allClientIDs)
   for client in allClientIDs:
@@ -36,7 +36,7 @@ def disconnect_client():
       break
   emit('disconnection callback', {'playerName': disconnectedPlayer.name}, broadcast=True)
 
-@socketio.on('new player request', namespace='/play')
+@socketio.on('new player request')
 def add_player(msg):
   #Add the new player to players{} dict
   start_x = 1
@@ -50,7 +50,7 @@ def add_player(msg):
      'direction':new_player.direction},
     broadcast=True)
 
-@socketio.on('move right foot', namespace='/play')
+@socketio.on('move right foot')
 def move_avatar_right():
   #  print('right')
   player = players[id(request.namespace)]
@@ -60,7 +60,7 @@ def move_avatar_right():
   player.last_foot_moved = 0
   check_collision(player)
 
-@socketio.on('move left foot', namespace='/play')
+@socketio.on('move left foot')
 def move_avatar_left():
   #print('left')
   player = players[id(request.namespace)]
@@ -70,7 +70,7 @@ def move_avatar_left():
   player.last_foot_moved = 1
   check_collision(player)
 
-@socketio.on('avatar turn request', namespace='/play')
+@socketio.on('avatar turn request')
 def turn():
   player = players[id(request.namespace)]
   player.direction *= -1
@@ -78,7 +78,7 @@ def turn():
   emit('update remote players about the turn',
   {'playerName': player.name, 'direction': player.direction}, broadcast=True)
 
-@socketio.on('avatar drop request', namespace='/play')
+@socketio.on('avatar drop request')
 def drop_down():
   player = players[id(request.namespace)]
   if not player.is_falling:
@@ -87,7 +87,7 @@ def drop_down():
     if player.grid_y > grid_height-1:
       player.grid_y = grid_height-1
 
-@socketio.on('request world from server', namespace='/play')
+@socketio.on('request world from server')
 def return_world_info(msg):
   add_player(msg)
   emit('send world to client', {'grid':grid, 'width':grid_width, 'height':grid_height,
@@ -146,7 +146,6 @@ def check_collision(player):
     player.vel_y = 0
     set_up_world()
   socketio.emit('update remote players about the move',
-  {'playerName': player.name, 'x': player.grid_x, 'y': player.grid_y},
-  namespace='/play') #need the namespace argument
+  {'playerName': player.name, 'x': player.grid_x, 'y': player.grid_y})
 
 set_up_world()
