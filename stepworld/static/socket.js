@@ -1,4 +1,4 @@
-var socket = io.connect('http://' + document.domain + ':' + location.port + '/play');
+var socket = io.connect();
 var playerName = Math.random();
 
 /***
